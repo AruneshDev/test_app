@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="description" content="Simple accessible calculator with light and dark mode">
+<meta name="theme-color" content="#0d9488">
+<title>Calculator - Simple Accessible Calculator</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{--bg:#f8fafc;--surface:#fff;--border:#e2e8f0;--text:#0f172a;--text-muted:#64748b;--primary:#0d9488;--primary-hover:#0f766e;--btn-num:#f1f5f9;--btn-num-hover:#e2e8f0;--btn-util:#fef3c7;--btn-util-hover:#fde68a;--btn-op:#ccfbf1;--btn-op-hover:#99f6e4;--btn-eq:#0d9488;--btn-eq-hover:#0f766e;--shadow:0 4px 24px rgba(0,0,0,.08);--radius:16px;--radius-sm:12px;--space-xs:4px;--space-sm:8px;--space-md:16px;--space-lg:24px;--text-xs:12px;--text-sm:14px;--text-md:18px;--text-lg:24px;--text-xl:36px;font-family:'Inter',system-ui,sans-serif}
+[data-theme="dark"]{--bg:#0f172a;--surface:#1e293b;--border:#334155;--text:#f8fafc;--text-muted:#94a3b8;--btn-num:#334155;--btn-num-hover:#475569;--btn-util:#78350f;--btn-util-hover:#92400e;--btn-op:#134e4a;--btn-op-hover:#115e59;--shadow:0 4px 24px rgba(0,0,0,.3)}
+html{height:100%}body{min-height:100%;background:var(--bg);color:var(--text);display:flex;align-items:center;justify-content:center;padding:var(--space-md);transition:background .2s,color .2s}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:0s!important;transition-duration:0s!important;transform:none!important}}
+:focus-visible{outline:2px solid var(--primary);outline-offset:2px;border-radius:var(--radius-sm)}
+.app-wrapper{width:100%;max-width:380px}
+.calculator-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden;padding:var(--space-lg)}
+.header{display:flex;justify-content:flex-end;margin-bottom:var(--space-md)}
+.theme-toggle{width:44px;height:44px;border:none;border-radius:var(--radius-sm);background:var(--btn-num);color:var(--text);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:20px;transition:background .15s,transform .1s}
+.theme-toggle:hover{background:var(--btn-num-hover)}
+.theme-toggle:active{transform:scale(.95)}
+.display{background:var(--bg);border-radius:var(--radius-sm);padding:var(--space-md);margin-bottom:var(--space-md);min-height:88px;display:flex;flex-direction:column;justify-content:flex-end;text-align:right;overflow:hidden}
+.expr{font-size:var(--text-sm);color:var(--text-muted);min-height:20px;word-break:break-all}
+.result{font-size:var(--text-xl);font-weight:600;color:var(--text);min-height:44px;word-break:break-all;line-height:1.2}
+.keypad{display:grid;grid-template-columns:repeat(4,1fr);gap:var(--space-sm)}
+.btn{height:60px;border:none;border-radius:var(--radius-sm);font-size:var(--text-md);font-weight:500;cursor:pointer;transition:background .15s,transform .1s;display:flex;align-items:center;justify-content:center}
+.btn:active{transform:scale(.95)}
+.btn-number{background:var(--btn-num);color:var(--text)}.btn-number:hover{background:var(--btn-num-hover)}
+.btn-util{background:var(--btn-util);color:#92400e}.btn-util:hover{background:var(--btn-util-hover)}
+[data-theme="dark"] .btn-util{color:#fcd34d}
+.btn-operator{background:var(--btn-op);color:var(--primary)}.btn-operator:hover{background:var(--btn-op-hover)}
+.btn-equals{background:var(--btn-eq);color:#fff;grid-column:span 1}.btn-equals:hover{background:var(--btn-eq-hover)}
+.btn-wide{grid-column:span 2}
+@media(max-width:400px){.calculator-card{padding:var(--space-md)}.btn{height:52px;font-size:var(--text-sm)}.result{font-size:var(--text-lg)}}
+</style>
+</head>
+<body>
+<div class="app-wrapper">
+<div class="calculator-card" role="application" aria-label="Calculator">
+<div class="header">
+<button type="button" class="theme-toggle" id="themeToggle" aria-label="Toggle dark mode" title="Toggle theme">☀️</button>
+</div>
+<div class="display">
+<div class="expr" id="expr" aria-hidden="true"></div>
+<div class="result" id="result" aria-live="polite" aria-atomic="true">0</div>
+</div>
+<div class="keypad" role="group" aria-label="Calculator keypad">
+<button type="button" class="btn btn-util" data-action="clear" aria-label="Clear all">AC</button>
+<button type="button" class="btn btn-util" data-action="sign" aria-label="Toggle positive negative">+/−</button>
+<button type="button" class="btn btn-util" data-action="percent" aria-label="Percent">%</button>
+<button type="button" class="btn btn-operator" data-action="operator" data-value="/" aria-label="Divide">÷</button>
+<button type="button" class="btn btn-number" data-action="number" data-value="7" aria-label="Seven">7</button>
+<button type="button" class="btn btn-number" data-action="number" data-value="8" aria-label="Eight">8</button>
+<button type="button" class="btn btn-number" data-action="number" data-value="9" aria-label="Nine">9</button>
+<button type="button" class="btn btn-operator" data-action="operator" data-value="*" aria-label="Multiply">×</button>
+<button type="button" class="btn btn-number" data-action="number" data-value="4" aria-label="Four">4</button>
+<button type="button" class="btn btn-number" data-action="number" data-value="5" aria-label="Five">5</button>
+<button type="button" class="btn btn-number" data-action="number" data-value="6" aria-label="Six">6</button>
+<button type="button" class="btn btn-operator" data-action="operator" data-value="-" aria-label="Subtract">−</button>
+<button type="button" class="btn btn-number" data-action="number" data-value="1" aria-label="One">1</button>
+<button type="button" class="btn btn-number" data-action="number" data-value="2" aria-label="Two">2</button>
+<button type="button" class="btn btn-number" data-action="number" data-value="3" aria-label="Three">3</button>
+<button type="button" class="btn btn-operator" data-action="operator" data-value="+" aria-label="Add">+</button>
+<button type="button" class="btn btn-number btn-wide" data-action="number" data-value="0" aria-label="Zero">0</button>
+<button type="button" class="btn btn-number" data-action="decimal" aria-label="Decimal point">.</button>
+<button type="button" class="btn btn-equals" data-action="equals" aria-label="Equals">=</button>
+</div>
+</div>
+</div>
+<script>
+(function(){var d=document,expr=d.getElementById('expr'),result=d.getElementById('result'),toggle=d.getElementById('themeToggle'),state={cur:'0',prev:null,op:null,fresh:true};function fmt(n){if(n==='Error')return n;var v=parseFloat(n);if(isNaN(v))return'0';if(!isFinite(v))return'Error';var s=v.toPrecision(12).replace(/(\.[0-9]*[1-9])0+$/,'$1').replace(/\.0+$/,'');return s.length>14?v.toExponential(6):s}function upd(){result.textContent=fmt(state.cur);expr.textContent=state.prev!==null?fmt(state.prev)+' '+opSym(state.op):''}function opSym(o){return{'+':"+",'-':"−",'*':"×",'/':"÷"}[o]||''}function calc(a,b,o){var x=parseFloat(a),y=parseFloat(b);if(isNaN(x)||isNaN(y))return'Error';switch(o){case'+':return x+y;case'-':return x-y;case'*':return x*y;case'/':return y===0?'Error':x/y}return'Error'}function num(v){if(state.cur==='Error')state.cur='0';if(state.fresh){state.cur=v==='.'?'0.':v;state.fresh=false}else{if(v==='.'&&state.cur.includes('.'))return;if(state.cur==='0'&&v!=='.')state.cur=v;else if(state.cur.length<15)state.cur+=v}upd()}function oper(o){if(state.cur==='Error'){state.cur='0';state.prev=null;state.op=null}if(state.prev!==null&&!state.fresh){var r=calc(state.prev,state.cur,state.op);state.prev=r;state.cur=String(r)}else{state.prev=state.cur}state.op=o;state.fresh=true;upd()}function eq(){if(state.prev===null||state.op===null)return;var r=calc(state.prev,state.cur,state.op);state.cur=String(r);state.prev=null;state.op=null;state.fresh=true;upd()}function clr(){state={cur:'0',prev:null,op:null,fresh:true};upd()}function sign(){if(state.cur==='Error'||state.cur==='0')return;state.cur=state.cur.startsWith('-')?state.cur.slice(1):'-'+state.cur;upd()}function pct(){var v=parseFloat(state.cur);if(isNaN(v))return;state.cur=String(v/100);state.fresh=true;upd()}d.querySelector('.keypad').addEventListener('click',function(e){var b=e.target.closest('button');if(!b)return;var a=b.dataset.action,v=b.dataset.value;if(a==='number')num(v);else if(a==='decimal')num('.');else if(a==='operator')oper(v);else if(a==='equals')eq();else if(a==='clear')clr();else if(a==='sign')sign();else if(a==='percent')pct()});d.addEventListener('keydown',function(e){var k=e.key;if(k>='0'&&k<='9')num(k);else if(k==='.')num('.');else if(k==='+'||k==='-')oper(k);else if(k==='*')oper('*');else if(k==='/')oper('/');else if(k==='Enter'||k==='='){e.preventDefault();eq()}else if(k==='Escape')clr();else if(k==='Backspace'){if(state.cur.length>1)state.cur=state.cur.slice(0,-1);else state.cur='0';upd()}else if(k==='%')pct()});function setTheme(t){d.documentElement.setAttribute('data-theme',t);toggle.textContent=t==='dark'?'🌙':'☀️';toggle.setAttribute('aria-label',t==='dark'?'Switch to light mode':'Switch to dark mode');try{localStorage.setItem('theme',t)}catch(e){}}toggle.addEventListener('click',function(){var c=d.documentElement.getAttribute('data-theme');setTheme(c==='dark'?'light':'dark')});(function(){var s;try{s=localStorage.getItem('theme')}catch(e){}if(!s)s=window.matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light';setTheme(s)})();upd()})();
+</script>
+</body>
+</html>
